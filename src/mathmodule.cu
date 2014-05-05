@@ -119,7 +119,6 @@ static PyObject *mathmodule_dot(PyObject *self, PyObject *args)
 	h_cvect2 = (double*) vect2->data;
 	
 	// CUDA dot-product
-	
 	Vector d_vect1(h_cvect1, n);
 	Vector d_vect2(h_cvect2, n);
 	double *d_dot_result;
@@ -127,6 +126,7 @@ static PyObject *mathmodule_dot(PyObject *self, PyObject *args)
 	cudaMemset(d_dot_result, 0, sizeof(double));
 	__start()
 	dot_kernel<<<(n + MAX_THREADS -1)/MAX_THREADS, MAX_THREADS, MAX_THREADS * sizeof(double)>>>(d_vect1, d_vect2, d_dot_result);
+	cudaThreadSynchronize(); // block until the device is finished
 	__stop()
 	cudaError_t error = cudaGetLastError();
 	if(error != cudaSuccess)
