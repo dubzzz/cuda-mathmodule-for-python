@@ -1,6 +1,9 @@
 #include <Python.h> // always first
 #include <arrayobject.h>
 
+#include "errors.cuh"
+
+#include "Matrix.cuh"
 #include "Vector.cuh"
 #include "mathmodule.hpp"
 
@@ -18,6 +21,7 @@
 static PyMethodDef MathModuleMethods[] =
 {
 	{"dot", mathmodule_dot, METH_VARARGS, "Compute the value of the dot product of two NumPy arrays"},
+	{"product", mathmodule_product, METH_VARARGS, "Compute the product of Matrix x Vector NumPy arrays"},
 	{NULL, NULL, 0, NULL}, //Sentinel: end of the structure
 };
 
@@ -49,7 +53,7 @@ __device__ double atomicAdd(double* address, double val) // http://stackoverflow
 __global__ void dot_kernel(const Vector d_vect1, const Vector d_vect2, double *dot_result)
 {
 	/*
-		Each block has to evaluate its the dotproduct of
+		Each block has to evaluate its the dot of
 		blockDim.x elements by blockDim.x
 		
 		Once it is done it adds the value to dot_result
@@ -58,15 +62,11 @@ __global__ void dot_kernel(const Vector d_vect1, const Vector d_vect2, double *d
 	
 	int cacheIdx = threadIdx.x;
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if (i >= d_vect1.getSize())
-	{
-		cache[cacheIdx] = 0;
-		return;
-	}
-	
-	cache[cacheIdx] = d_vect1[i] * d_vect2[i];
-	
+	cache[cacheIdx] = i >= d_vect1.getSize() ? 0. : d_vect1[i] * d_vect2[i];
 	__syncthreads();
+	
+	if (i >= d_vect1.getSize())
+		return;
 	
 	int padding = blockDim.x/2;
 	while (padding != 0)
@@ -93,12 +93,12 @@ static PyObject *mathmodule_dot(PyObject *self, PyObject *args)
 	
 	if (vect1 == NULL)
 	{
-		PyErr_SetString(PyExc_ValueError, "In mathmodule_dotproduct: array vect1 must be defined");
+		PyErr_SetString(PyExc_ValueError, "In mathmodule_dot: array vect1 must be defined");
 		return NULL;
 	}
 	if (vect2 == NULL)
 	{
-		PyErr_SetString(PyExc_ValueError, "In mathmodule_dotproduct: array vect2 must be defined");
+		PyErr_SetString(PyExc_ValueError, "In mathmodule_dot: array vect2 must be defined");
 		return NULL;
 	}
 	
@@ -110,7 +110,7 @@ static PyObject *mathmodule_dot(PyObject *self, PyObject *args)
 	const unsigned long int n = vect1->dimensions[0];
 	if (vect2->dimensions[0] != n)
 	{
-		PyErr_SetString(PyExc_ValueError, "In mathmodule_dotproduct: arrays vect1 and vect2 must have the same dimensions");
+		PyErr_SetString(PyExc_ValueError, "In mathmodule_dot: arrays vect1 and vect2 must have the same dimensions");
 		return NULL;
 	}
 	
@@ -125,14 +125,14 @@ static PyObject *mathmodule_dot(PyObject *self, PyObject *args)
 	cudaMalloc(&d_dot_result, sizeof(double));
 	cudaMemset(d_dot_result, 0, sizeof(double));
 	__start()
-	dot_kernel<<<(n + MAX_THREADS -1)/MAX_THREADS, MAX_THREADS, MAX_THREADS * sizeof(double)>>>(d_vect1, d_vect2, d_dot_result);
+	dot_kernel<<<(n + MAX_THREADS -1)/MAX_THREADS, MAX_THREADS>>>(d_vect1, d_vect2, d_dot_result);
 	cudaThreadSynchronize(); // block until the device is finished
 	__stop()
 	cudaError_t error = cudaGetLastError();
 	if(error != cudaSuccess)
 	{
 		cudaFree(d_dot_result);
-		PyErr_SetString(PyExc_RuntimeError, "In mathmodule_dotproduct: CUDA failed");
+		PyErr_SetString(PyExc_RuntimeError, "In mathmodule_dot: CUDA failed");
 		return NULL;
 	}
 	
@@ -144,11 +144,112 @@ static PyObject *mathmodule_dot(PyObject *self, PyObject *args)
 	return Py_BuildValue("d", dot_result);
 }
 
+__global__ void product_kernel(const Matrix d_mat, const Vector d_vect, Vector d_vect_result)
+{
+	/*
+		Each block has to evaluate the product of its line elements
+		by the corresponding vector elements
+		
+		A block can only be responsible for one line
+		If the line is to large for one block, the work is split among several blocks
+	*/
+	
+	__shared__ double cache[MAX_THREADS];
+	
+	int cacheIdx = threadIdx.y;
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	int j = blockIdx.y * blockDim.y + threadIdx.y;
+	cache[cacheIdx] = (i >= d_mat.getHeight() || j >= d_mat.getWidth()) ? 0. : d_mat.get(i, j) * d_vect[j];
+	__syncthreads();
+	
+	if (i >= d_mat.getHeight() || j >= d_mat.getWidth())
+		return;
+	
+	int padding = blockDim.y/2;
+	while (padding != 0)
+	{
+		if (cacheIdx < padding)
+			cache[cacheIdx] += cache[cacheIdx + padding];
+		
+		__syncthreads();
+		padding /= 2;
+	}
+	
+	if (cacheIdx == 0)
+		atomicAdd(&d_vect_result[i], cache[0]);
+}
+
+static PyObject *mathmodule_product(PyObject *self, PyObject *args)
+{
+	PyArrayObject *mat, *vect;
+	double *h_cmat, *h_cvect;
+	
+	// if an error is detected in the argument list
+	if (! PyArg_ParseTuple(args, "O!O!", &PyArray_Type, &mat, &PyArray_Type, &vect))
+		return NULL;
+	
+	if (mat == NULL)
+	{
+		PyErr_SetString(PyExc_ValueError, "In mathmodule_product: matrix mat must be defined");
+		return NULL;
+	}
+	if (vect == NULL)
+	{
+		PyErr_SetString(PyExc_ValueError, "In mathmodule_product: array vect must be defined");
+		return NULL;
+	}
+	
+	// Check that objects are 'double' type and matrix/vector
+	if (not_doublematrix(mat)) return NULL;
+	if (not_doublevector(vect)) return NULL;
+	
+	// Check dimensions
+	if (mat->dimensions[1] != vect->dimensions[0])
+	{
+		PyErr_SetString(PyExc_ValueError, "In mathmodule_product: dim1 of mat must be equal to dim0 of vect");
+		return NULL;
+	}
+	
+	// Change contiguous arrays into C *arrays
+	h_cmat = (double*) mat->data;
+	h_cvect = (double*) vect->data;
+	
+	// CUDA product
+	Matrix d_mat(h_cmat, mat->dimensions[0], mat->dimensions[1]);
+	Vector d_vect(h_cvect, vect->dimensions[0]);
+	Vector d_vect_result(mat->dimensions[0]);
+	d_vect_result.memsetZero();
+	__start()
+	const dim3 num_threads(1, MAX_THREADS, 1);
+	const dim3 num_blocks((int)mat->dimensions[0], ((int)mat->dimensions[1] + MAX_THREADS -1)/MAX_THREADS, 1);
+	product_kernel<<<num_blocks, num_threads>>>(d_mat, d_vect, d_vect_result);
+	cudaThreadSynchronize(); // block until the device is finished
+	__stop()
+	cudaError_t error = cudaGetLastError();
+	if(error != cudaSuccess)
+	{
+		PyErr_SetString(PyExc_RuntimeError, "In mathmodule_product: CUDA failed");
+		return NULL;
+	}
+	
+	return PyArray_Return(d_vect_result.toNumPy());
+}
+
 bool not_doublevector(PyArrayObject *vec)
 {
 	if (vec->descr->type_num != NPY_DOUBLE || vec->nd != 1)
 	{
 		PyErr_SetString(PyExc_ValueError, "In not_doublevector: array must be of type Float and 1 dimensional (n).");
+		return true;
+	}
+	return false;
+}
+
+bool not_doublematrix(PyArrayObject *mat)
+{ 
+	if (mat->descr->type_num != NPY_DOUBLE || mat->nd != 2)
+	{
+		PyErr_SetString(PyExc_ValueError, "In not_doublematrix: array must be of type Float and 2 dimensional (n x m).");
 		return true;
 	}
 	return false;

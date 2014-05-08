@@ -65,6 +65,13 @@ public:
 		cudaMemset(data_, 0, size_ * sizeof(double));
 	}
 	
+	PyArrayObject *toNumPy() {
+		int dims[] = {size_};
+		PyArrayObject *h_arrayNumPy = (PyArrayObject *) PyArray_FromDims(1, dims, NPY_DOUBLE);
+		cudaErrorCheck(cudaMemcpy(h_arrayNumPy->data, data_, size_ * sizeof(double), cudaMemcpyDeviceToHost));
+		return h_arrayNumPy;
+	}
+	
 	__device__ __host__ double& get(const unsigned int &x) const {
 		return data_[x];
 	}
