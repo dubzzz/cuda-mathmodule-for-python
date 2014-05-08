@@ -13,6 +13,7 @@
 #include <iostream>
 
 class Vector {
+PyObject_HEAD
 private:
 	unsigned int size_;
 	
