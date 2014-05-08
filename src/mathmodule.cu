@@ -1,16 +1,14 @@
 #include <Python.h> // always first
 #include <arrayobject.h>
 
-#include <cuda.h>
-#include <driver_functions.h>
-
-#include "errors.cuh"
-#include "PythonChecks.hpp"
-
-#include "objects/Matrix.cuh"
-#include "objects/Vector.cuh"
-#include "objects/VectorObject.hpp"
 #include "mathmodule.hpp"
+
+#include "checks/CudaChecks.hpp"
+#include "checks/PythonChecks.hpp"
+
+#include "objects/Matrix.hpp"
+#include "objects/Vector.hpp"
+#include "objects/VectorObject.hpp"
 
 //#define _DEBUG
 #ifdef _DEBUG
@@ -42,6 +40,9 @@ PyMODINIT_FUNC initmathmodule(void)
 		return;
 	
 	import_array(); // for NumPy
+	init_matrix();
+	init_vector();
+	init_vectorobject();
 	
 	/* Add objects: Vector */
 	

@@ -1,6 +1,16 @@
 #ifndef __VECTOR_HPP__
 #define __VECTOR_HPP__
 
+#include <Python.h>
+#include <arrayobject.h>
+
+#ifndef __device__
+	#define __device__
+#endif
+
+#ifndef __host__
+	#define __host__
+#endif
 /*
 	This class represents Vectors GPU-side
 	It automatically frees memory when necessary
@@ -9,7 +19,6 @@
 */
 
 class Vector {
-PyObject_HEAD
 private:
 	unsigned int size_;
 	
@@ -27,10 +36,18 @@ public:
 	void memsetZero();
 	
 	PyArrayObject *toNumPy();
-	__device__ __host__ double& get(const unsigned int &x) const;
-	__device__ __host__ double& operator[](const unsigned int &x) const;
+	__device__ double& get(const unsigned int &x) const;
+	__device__ double& operator[](const unsigned int &x) const;
 	__device__ __host__ unsigned int getSize() const;
 };
+
+/*
+	Call this method before calling anything else
+	
+	if another method which requires NumPy is called without having called this method,
+	the program will return a segmentation fault
+*/
+void init_vector();
 
 #endif
 

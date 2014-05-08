@@ -1,4 +1,8 @@
-#define cudaErrorCheck(call) { cudaAssert(call,__FILE__,__LINE__); }
+#include <iostream>
+#include <stdio.h>
+
+#include "CudaChecks.hpp"
+
 void cudaAssert(const cudaError err, const char *file, const int line)
 { 
 	if(cudaSuccess != err)

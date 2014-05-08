@@ -1,11 +1,14 @@
-#ifndef __VECTOR_CUH__
-#define __VECTOR_CUH__
-
+#include "../checks/CudaChecks.hpp"
 #include "Vector.hpp"
+#include <iostream>
+
+void init_vector() {
+	import_array();
+}
 
 Vector::Vector(const unsigned int &size) : size_(size) {
 	smart_ptr_counter_ = new int(1);
-	cudaMalloc(&data_, size_ * sizeof(double));
+	cudaErrorCheck(cudaMalloc(&data_, size_ * sizeof(double)));
 }
 
 Vector::Vector(const Vector &v) : size_(v.size_), data_(v.data_), smart_ptr_counter_(v.smart_ptr_counter_) {
@@ -14,8 +17,8 @@ Vector::Vector(const Vector &v) : size_(v.size_), data_(v.data_), smart_ptr_coun
 
 Vector::Vector(const double *h_v, const unsigned int &size) : size_(size) {
 	smart_ptr_counter_ = new int(1);
-	cudaMalloc(&data_, size_ * sizeof(double));
-	cudaMemcpy(data_, h_v, size_ * sizeof(double), cudaMemcpyHostToDevice);
+	cudaErrorCheck(cudaMalloc(&data_, size_ * sizeof(double)));
+	cudaErrorCheck(cudaMemcpy(data_, h_v, size_ * sizeof(double), cudaMemcpyHostToDevice));
 }
 
 Vector::~Vector() {
@@ -28,7 +31,7 @@ Vector::~Vector() {
 	
 	delete smart_ptr_counter_;
 	
-	cudaFree(data_);
+	cudaErrorCheck(cudaFree(data_));
 }
 
 void Vector::free() {
@@ -40,12 +43,12 @@ void Vector::free() {
 	
 	delete smart_ptr_counter_;
 	
-	cudaFree(data_);
+	cudaErrorCheck(cudaFree(data_));
 	data_ = 0;
 }		
 
 void Vector::memsetZero() {
-	cudaMemset(data_, 0, size_ * sizeof(double));
+	cudaErrorCheck(cudaMemset(data_, 0, size_ * sizeof(double)));
 }
 
 PyArrayObject *Vector::toNumPy() {
@@ -55,15 +58,13 @@ PyArrayObject *Vector::toNumPy() {
 	return h_arrayNumPy;
 }
 
-__device__ __host__ double& Vector::get(const unsigned int &x) const {
+__device__ double& Vector::get(const unsigned int &x) const {
 	return data_[x];
 }
 
-__device__ __host__ double& Vector::operator[](const unsigned int &x) const {
+__device__ double& Vector::operator[](const unsigned int &x) const {
 	return data_[x];
 }
 
-__device__ __host__ unsigned int Vector::getSize() const { return size_; }
-
-#endif
+__device__ unsigned int Vector::getSize() const { return size_; }
 

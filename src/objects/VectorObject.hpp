@@ -4,7 +4,7 @@
 #include <Python.h>
 #include <arrayobject.h>
 
-#include "../PythonChecks.hpp"
+#include "../checks/PythonChecks.hpp"
 #include "Vector.hpp"
 
 typedef struct
@@ -13,51 +13,23 @@ typedef struct
 	Vector *v;
 } VectorObject;
 
-static PyObject *Vector_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
-static int Vector_init(VectorObject *self, PyObject *args, PyObject *kwds);
-static void Vector_dealloc(VectorObject *self);
-static PyObject *Vector_numpy(VectorObject *self);
-
-static PyObject *Vector_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-	VectorObject *self;
-	self = (VectorObject*) type->tp_alloc(type, 0);
-	if (self == NULL) return NULL;
-	return (PyObject*) self;
-}
-
-static int Vector_init(VectorObject *self, PyObject *args, PyObject *kwds)
-{
-	PyArrayObject *vect;
+/*
+	Call this method before calling anything else
 	
-	if (! PyArg_ParseTuple(args, "O!", &PyArray_Type, &vect))
-		return -1;
-	
-	if (vect == NULL)
-	{
-		PyErr_SetString(PyExc_ValueError, "In mathmodule_Vector_init: array vect must be defined");
-		return -1;
-	}
-	if (not_doublevector(vect)) return -1;
-	
-	self->v = new Vector((double*) vect->data, vect->dimensions[0]);
-	return 0;
-}
+	if another method which requires NumPy is called without having called this method,
+	the program will return a segmentation fault
+*/
+void init_vectorobject();
 
-static void Vector_dealloc(VectorObject *self)
-{
-	delete self->v;
-}
-
-static PyObject *Vector_numpy(VectorObject *self)
-{
-	return PyArray_Return(self->v->toNumPy());
-}
+PyObject *Vector_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
+int Vector_init(VectorObject *self, PyObject *args, PyObject *kwds);
+void Vector_dealloc(VectorObject *self);
+PyObject *Vector_numpy(VectorObject *self);
 
 static PyMethodDef Vector_methods[] =
 {
 	{"numpy", (PyCFunction)Vector_numpy, METH_NOARGS, "Return the numpy equivalent of the object"},
-	{NULL}  /* Sentinel */
+	{NULL} /* Sentinel */
 };
 
 static PyTypeObject VectorType =
