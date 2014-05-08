@@ -24,11 +24,11 @@ void init_vectorobject();
 PyObject *Vector_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 int Vector_init(VectorObject *self, PyObject *args, PyObject *kwds);
 void Vector_dealloc(VectorObject *self);
-PyObject *Vector_numpy(VectorObject *self);
+PyObject *Vector_toNumPy(VectorObject *self);
 
 static PyMethodDef Vector_methods[] =
 {
-	{"numpy", (PyCFunction)Vector_numpy, METH_NOARGS, "Return the numpy equivalent of the object"},
+	{"toNumPy", (PyCFunction)Vector_toNumPy, METH_NOARGS, "Return the NumPy equivalent of the object"},
 	{NULL} /* Sentinel */
 };
 

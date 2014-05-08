@@ -36,7 +36,7 @@ void Vector_dealloc(VectorObject *self)
 	delete self->v;
 }
 
-PyObject *Vector_numpy(VectorObject *self)
+PyObject *Vector_toNumPy(VectorObject *self)
 {
 	return PyArray_Return(self->v->toNumPy());
 }
