@@ -11,6 +11,6 @@ gpu_array = mm.Vector(numpy_array)
 ```
 
 And GPU-array to NumPy array:
-```
+```Python
 numpy_array = gpu_array.toNumPy()
 ```
