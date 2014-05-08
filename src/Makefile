@@ -132,4 +132,4 @@ run: build
 	./a.out
 
 clean:
-	rm -f *.so *.o
+	rm -f ../bin/*.so
