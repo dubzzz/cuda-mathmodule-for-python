@@ -13,6 +13,8 @@
 #include "objects/Vector.hpp"
 #include "objects/VectorObject.hpp"
 
+#include "preproc.hpp"
+
 static PyMethodDef MathModuleMethods[] =
 {
 	{"dot", mathmodule_dot, METH_VARARGS, "Compute the value of the dot product of two NumPy arrays"},
@@ -23,7 +25,7 @@ static PyMethodDef MathModuleMethods[] =
 __global__ void init_kernel() {}
 
 PyMODINIT_FUNC initmathmodule(void)
-{
+{__LOG__
 	/* Init module */
 	
 	PyObject* m;
@@ -52,7 +54,7 @@ PyMODINIT_FUNC initmathmodule(void)
 }
 
 static PyObject *mathmodule_dot(PyObject *self, PyObject *args)
-{
+{__LOG__
 	PyArrayObject *vect1, *vect2;
 	double *h_cvect1, *h_cvect2;
 	
@@ -88,7 +90,7 @@ static PyObject *mathmodule_dot(PyObject *self, PyObject *args)
 }
 
 static PyObject *mathmodule_product(PyObject *self, PyObject *args)
-{
+{__LOG__
 	PyArrayObject *mat, *vect;
 	double *h_cmat, *h_cvect;
 	
@@ -127,7 +129,7 @@ static PyObject *mathmodule_product(PyObject *self, PyObject *args)
 }
 
 int main(int argc, char *argv[])
-{
+{__LOG__
 	// Pass argv[0] to the Python interpreter
 	Py_SetProgramName(argv[0]);
 	

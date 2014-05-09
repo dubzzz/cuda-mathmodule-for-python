@@ -11,7 +11,7 @@ bool not_doublevector(PyArrayObject *vec)
 }
 
 bool not_doublematrix(PyArrayObject *mat)
-{ 
+{
 	if (mat->descr->type_num != NPY_DOUBLE || mat->nd != 2)
 	{
 		PyErr_SetString(PyExc_ValueError, "In not_doublematrix: array must be of type Float and 2 dimensional (n x m).");

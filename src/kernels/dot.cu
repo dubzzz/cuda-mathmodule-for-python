@@ -37,10 +37,10 @@ __global__ void dot_kernel(const Vector d_vect1, const Vector d_vect2, double *d
 }
 
 double dot(const Vector &d_vect1, const Vector &d_vect2)
-{
+{__LOG__
 	if (d_vect1.getSize() != d_vect2.getSize())
 	{
-		PyErr_SetString(PyExc_ValueError, "In mathmodule_dot: arrays vect1 and vect2 must have the same dimensions");
+		PyErr_SetString(PyExc_ValueError, "In mathmodule_dot: vectors vect1 and vect2 must have the same dimensions");
 		return 0.;
 	}
 	

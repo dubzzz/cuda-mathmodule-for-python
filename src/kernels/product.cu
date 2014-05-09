@@ -40,10 +40,10 @@ __global__ void product_kernel(const Matrix d_mat, const Vector d_vect, Vector d
 }
 
 Vector *product(const Matrix &d_mat, const Vector &d_vect)
-{
+{__LOG__
 	if (d_mat.getWidth() != d_vect.getSize())
 	{
-		PyErr_SetString(PyExc_ValueError, "In mathmodule_product: dim1 of mat must be equal to dim0 of vect");
+		PyErr_SetString(PyExc_ValueError, "In mathmodule_product: width of mat must be equal to size of vect");
 		return NULL;
 	}
 	

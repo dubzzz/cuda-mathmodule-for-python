@@ -1,12 +1,13 @@
 #include "VectorObject.hpp"
+#include "../preproc.hpp"
 
 void init_vectorobject()
-{
+{__LOG__
 	import_array();
 }
 
 PyObject *Vector_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
+{__LOG__
 	VectorObject *self;
 	self = (VectorObject*) type->tp_alloc(type, 0);
 	if (self == NULL) return NULL;
@@ -14,7 +15,7 @@ PyObject *Vector_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 int Vector_init(VectorObject *self, PyObject *args, PyObject *kwds)
-{
+{__LOG__
 	PyArrayObject *vect;
 	
 	if (! PyArg_ParseTuple(args, "O!", &PyArray_Type, &vect))
@@ -32,12 +33,12 @@ int Vector_init(VectorObject *self, PyObject *args, PyObject *kwds)
 }
 
 void Vector_dealloc(VectorObject *self)
-{
+{__LOG__
 	delete self->v;
 }
 
 PyObject *Vector_toNumPy(VectorObject *self)
-{
+{__LOG__
 	return PyArray_Return(self->v->toNumPy());
 }
 

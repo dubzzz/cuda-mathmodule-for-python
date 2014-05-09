@@ -2,6 +2,7 @@
 #define __VECTOROBJECT_HPP__
 
 #include <Python.h>
+#include <structmember.h>
 #include <arrayobject.h>
 
 #include "../checks/PythonChecks.hpp"
@@ -24,6 +25,10 @@ void init_vectorobject();
 PyObject *Vector_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 int Vector_init(VectorObject *self, PyObject *args, PyObject *kwds);
 void Vector_dealloc(VectorObject *self);
+
+PyObject *Vector_add(PyObject *a, PyObject *b);
+PyObject *Vector_iadd(PyObject *self, PyObject *b);
+
 PyObject *Vector_toNumPy(VectorObject *self);
 
 static PyMethodDef Vector_methods[] =
