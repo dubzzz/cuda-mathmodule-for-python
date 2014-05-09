@@ -11,7 +11,7 @@
 typedef struct
 {
 	PyObject_HEAD
-	Vector *v;
+	unsigned long long ptr_vector;
 } VectorObject;
 
 /*
@@ -30,6 +30,12 @@ PyObject *Vector_add(PyObject *a, PyObject *b);
 PyObject *Vector_iadd(PyObject *self, PyObject *b);
 
 PyObject *Vector_toNumPy(VectorObject *self);
+
+static PyMemberDef Vector_members[] =
+{
+	{"ptr_vector", T_ULONGLONG, offsetof(VectorObject, ptr_vector), READONLY, "Pointer to Vector GPU-size object"},
+	{NULL} /* Sentinel */
+};
 
 static PyMethodDef Vector_methods[] =
 {
@@ -68,7 +74,7 @@ static PyTypeObject VectorType =
 	0,			/* tp_iter */
 	0,			/* tp_iternext */
 	Vector_methods,		/* tp_methods */
-	0,			/* tp_members */
+	Vector_members,		/* tp_members */
 	0,			/* tp_getset */
 	0,			/* tp_base */
 	0,			/* tp_dict */
