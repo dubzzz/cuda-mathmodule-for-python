@@ -1,7 +1,7 @@
 cuda-mathmodule-for-python
 ==========================
 
-Python module for Linear Algebra computations using CUDA.
+Python module for Linear Algebra computations using CUDA. The module relies on Python/C API and NumPy/C API.
 
 Converting a NumPy array to a GPU-array:
 ```Python
