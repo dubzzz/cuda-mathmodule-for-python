@@ -43,6 +43,7 @@ PyMODINIT_FUNC initmathmodule(void)
 	if (PyType_Ready(&VectorType) < 0)
 		return;
 	
+	VectorType.tp_new = PyType_GenericNew;
 	Py_INCREF(&VectorType);
 	PyModule_AddObject(m, "Vector", (PyObject *)&VectorType);
 	

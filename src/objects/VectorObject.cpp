@@ -13,15 +13,6 @@ void init_vectorobject()
 	import_array();
 }
 
-PyObject *Vector_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{__LOG__
-	VectorObject *self;
-	self = (VectorObject*) type->tp_alloc(type, 0);
-	if (self == NULL) return NULL;
-	resetVectorPtr(self);
-	return (PyObject*) self;
-}
-
 int Vector_init(VectorObject *self, PyObject *args, PyObject *kwds)
 {__LOG__
 	PyArrayObject *vect;
@@ -60,14 +51,12 @@ PyObject *Vector_add(PyObject *a, PyObject *b)
 		return NULL;
 	}
 	voa = (VectorObject*) a;
-	vob = (VectorObject*) b;__LOG(1)
-	voc = new VectorObject();
+	vob = (VectorObject*) b;
+	voc = (VectorObject*) PyObject_New(VectorObject, &VectorType);
 	if (voc == NULL) return NULL;
-	Py_INCREF(voc);
 	
 	setVectorPtr(voc, new Vector(getVectorPtr(voa)->getSize()));
 	add(*getVectorPtr(voa), *getVectorPtr(vob), *getVectorPtr(voc));
-	__LOG(2)
 	return (PyObject*) voc;
 }
 
@@ -83,9 +72,7 @@ PyObject *Vector_iadd(PyObject *self, PyObject *b)
 	vob = (VectorObject*) b;
 	
 	add(*getVectorPtr(voa), *getVectorPtr(vob), *getVectorPtr(voa));
-	Py_INCREF(voa);
-	
-	return (PyObject*) voa;
+	return Py_BuildValue("O", (PyObject*) voa);
 }
 
 PyObject *Vector_toNumPy(VectorObject *self)

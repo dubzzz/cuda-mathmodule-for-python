@@ -26,7 +26,6 @@ typedef struct
 */
 void init_vectorobject();
 
-PyObject *Vector_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 int Vector_init(VectorObject *self, PyObject *args, PyObject *kwds);
 void Vector_dealloc(VectorObject *self);
 
@@ -128,7 +127,7 @@ static PyTypeObject VectorType =
 	0,			/* tp_dictoffset */
 	(initproc) Vector_init,	/* tp_init */
 	0,			/* tp_alloc */
-	Vector_new,		/* tp_new */
+	0,			/* tp_new */
 };
 
 #endif
