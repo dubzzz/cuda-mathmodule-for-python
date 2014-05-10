@@ -27,8 +27,12 @@ Matrix::Matrix(const double *h_m, const unsigned int &height, const unsigned int
 }
 
 Matrix::~Matrix()
-{__LOG__
-	if (! data_) return;
+{
+	if (! data_)
+	{__LOG__
+		return;
+	}
+	__LOG(*smart_ptr_counter_)
 	
 	if (*smart_ptr_counter_ > 1) {
 		(*smart_ptr_counter_) -= 1;
@@ -41,7 +45,13 @@ Matrix::~Matrix()
 }
 
 void Matrix::free()
-{__LOG__
+{
+	if (! data_)
+	{__LOG__
+		return;
+	}
+	__LOG(*smart_ptr_counter_)
+	
 	if(*smart_ptr_counter_ > 1) {// cuda-kernel constructs a copy of the object and then call its destructor
 		(*smart_ptr_counter_) -= 1;
 		data_ = 0;

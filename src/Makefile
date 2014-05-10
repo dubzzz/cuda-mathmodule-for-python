@@ -119,7 +119,7 @@ INCLUDES      := -I$(CUDA_INC_PATH) -I. -I.. -I../../common/inc -I${CUDA_PATH}/s
 
 # Additional parameters
 MAXRREGCOUNT  :=  -po maxrregcount=16
-OBJECTS_CUDA  := mathmodule.o checks/CudaChecks.o kernels/shared.o kernels/dot.o kernels/product.o objects/Matrix.o objects/Vector.o
+OBJECTS_CUDA  := mathmodule.o checks/CudaChecks.o kernels/shared.o kernels/add.o kernels/dot.o kernels/product.o objects/Matrix.o objects/Vector.o
 OBJECTS       := $(OBJECTS_CUDA) checks/PythonChecks.o objects/VectorObject.o
 
 # Target rules
@@ -133,6 +133,8 @@ checks/PythonChecks.o: checks/PythonChecks.cpp checks/PythonChecks.hpp
 	$(GCC) $(CCFLAGS) $(INCLUDES) -o $@ -c $< -fPIC
 
 kernels/shared.o: kernels/shared.cu kernels/shared.hpp
+	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
+kernels/add.o: kernels/add.cu kernels/add.hpp
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
 kernels/dot.o: kernels/dot.cu kernels/dot.hpp
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
