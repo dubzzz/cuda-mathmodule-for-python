@@ -37,7 +37,7 @@ __global__ void dot_kernel(const Vector d_vect1, const Vector d_vect2, double *d
 }
 
 double dot(const Vector &d_vect1, const Vector &d_vect2)
-{__LOG__
+{__CLOG__
 	if (d_vect1.getSize() != d_vect2.getSize())
 	{
 		PyErr_SetString(PyExc_ValueError, "In mathmodule_dot: vectors vect1 and vect2 must have the same dimensions");
@@ -47,8 +47,10 @@ double dot(const Vector &d_vect1, const Vector &d_vect2)
 	double *d_dot_result;
 	cudaMalloc(&d_dot_result, sizeof(double));
 	cudaMemset(d_dot_result, 0, sizeof(double));
+	__START__
 	dot_kernel<<<(d_vect1.getSize() + MAX_THREADS -1)/MAX_THREADS, MAX_THREADS>>>(d_vect1, d_vect2, d_dot_result);
 	cudaThreadSynchronize(); // block until the device is finished
+	__STOP__
 	cudaError_t error = cudaGetLastError();
 	if(error != cudaSuccess)
 	{

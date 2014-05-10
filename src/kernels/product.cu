@@ -40,7 +40,7 @@ __global__ void product_kernel(const Matrix d_mat, const Vector d_vect, Vector d
 }
 
 Vector *product(const Matrix &d_mat, const Vector &d_vect)
-{__LOG__
+{__CLOG__
 	if (d_mat.getWidth() != d_vect.getSize())
 	{
 		PyErr_SetString(PyExc_ValueError, "In mathmodule_product: width of mat must be equal to size of vect");
@@ -53,8 +53,10 @@ Vector *product(const Matrix &d_mat, const Vector &d_vect)
 	const dim3 num_threads(1, MAX_THREADS, 1);
 	const dim3 num_blocks((int)d_mat.getHeight(), ((int)d_mat.getWidth() + MAX_THREADS -1)/MAX_THREADS, 1);
 	
+	__START__
 	product_kernel<<<num_blocks, num_threads>>>(d_mat, d_vect, *d_vect_result);
 	cudaThreadSynchronize(); // block until the device is finished
+	__STOP__
 	cudaError_t error = cudaGetLastError();
 	if(error != cudaSuccess)
 	{

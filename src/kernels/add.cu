@@ -14,15 +14,17 @@ __global__ void add_kernel(const Vector d_va, const Vector d_vb, Vector d_vc)
 }
 
 bool add(const Vector &d_va, const Vector &d_vb, Vector &d_vc)
-{__LOG__
+{__CLOG__
 	if (d_va.getSize() != d_vb.getSize() || d_va.getSize() != d_vc.getSize())
 	{
 		PyErr_SetString(PyExc_ValueError, "In mathmodule_add: vectors va, vb and vc must have the same dimensions");
 		return false;
 	}
 	
+	__START__
 	add_kernel<<<(d_va.getSize() + MAX_THREADS -1)/MAX_THREADS, MAX_THREADS>>>(d_va, d_vb, d_vc);
 	cudaThreadSynchronize(); // block until the device is finished
+	__STOP__
 	cudaError_t error = cudaGetLastError();
 	if(error != cudaSuccess)
 	{
