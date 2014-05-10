@@ -110,6 +110,8 @@ ifeq ($(dbg),1)
       NVCCFLAGS += -g -G -D_DEBUG
       TARGET := debug
 else
+      CCFLAGS   += -O3
+      NVCCFLAGS += -O3
       TARGET := release
 endif
 
