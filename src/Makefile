@@ -127,26 +127,26 @@ all: build
 
 build: ../bin/mathmodule.so
 
-checks/CudaChecks.o: checks/CudaChecks.cu
+checks/CudaChecks.o: checks/CudaChecks.cu checks/CudaChecks.hpp
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
-checks/PythonChecks.o: checks/PythonChecks.cpp
+checks/PythonChecks.o: checks/PythonChecks.cpp checks/PythonChecks.hpp
 	$(GCC) $(CCFLAGS) $(INCLUDES) -o $@ -c $< -fPIC
 
-kernels/shared.o: kernels/shared.cu
+kernels/shared.o: kernels/shared.cu kernels/shared.hpp
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
-kernels/dot.o: kernels/dot.cu
+kernels/dot.o: kernels/dot.cu kernels/dot.hpp
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
-kernels/product.o: kernels/product.cu
+kernels/product.o: kernels/product.cu kernels/product.hpp
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
 
-objects/Matrix.o: objects/Matrix.cu
+objects/Matrix.o: objects/Matrix.cu objects/Matrix.hpp
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
-objects/Vector.o: objects/Vector.cu
+objects/Vector.o: objects/Vector.cu objects/Vector.hpp
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
-objects/VectorObject.o: objects/VectorObject.cpp
+objects/VectorObject.o: objects/VectorObject.cpp objects/VectorObject.hpp
 	$(GCC) $(CCFLAGS) $(INCLUDES) -o $@ -c $< -fPIC
 
-mathmodule.o: mathmodule.cu
+mathmodule.o: mathmodule.cu mathmodule.hpp
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(MAXRREGCOUNT) $(INCLUDES) -o $@ -dc $< -Xcompiler -fPIC
 
 mathmodule.dev.o: $(OBJECTS_CUDA)
