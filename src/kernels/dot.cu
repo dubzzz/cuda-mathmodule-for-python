@@ -45,8 +45,8 @@ double dot(const Vector &d_vect1, const Vector &d_vect2)
 	}
 	
 	double *d_dot_result;
-	cudaMalloc(&d_dot_result, sizeof(double));
-	cudaMemset(d_dot_result, 0, sizeof(double));
+	cudaErrorCheck(cudaMalloc(&d_dot_result, sizeof(double)));
+	cudaErrorCheck(cudaMemset(d_dot_result, 0, sizeof(double)));
 	__START__
 	dot_kernel<<<(d_vect1.getSize() + MAX_THREADS -1)/MAX_THREADS, MAX_THREADS>>>(d_vect1, d_vect2, d_dot_result);
 	cudaThreadSynchronize(); // block until the device is finished
@@ -60,8 +60,8 @@ double dot(const Vector &d_vect1, const Vector &d_vect2)
 	}
 	
 	double h_dot_result;
-	cudaMemcpy(&h_dot_result, d_dot_result, sizeof(double), cudaMemcpyDeviceToHost);
-	cudaFree(d_dot_result);
+	cudaErrorCheck(cudaMemcpy(&h_dot_result, d_dot_result, sizeof(double), cudaMemcpyDeviceToHost));
+	cudaErrorCheck(cudaFree(d_dot_result));
 	return h_dot_result;
 }
 
