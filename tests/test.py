@@ -4,6 +4,7 @@ import sys
 import unittest
 
 sys.path.append("../src/")
+sys.path.append("tests/../src/")
 import mathmodule as mm
 
 height = 4096
