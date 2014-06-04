@@ -3,6 +3,8 @@
 #include <iostream>
 #include "../preproc.hpp"
 
+#include "../kernels/add.cuh"
+
 bool is_init(false);
 void init_vector()
 {__LOG__
@@ -91,4 +93,14 @@ __device__ double& Vector::operator[](const unsigned int &x) const {
 }
 
 __device__ unsigned int Vector::getSize() const { return size_; }
+
+void Vector::__iadd__(Vector *vother)
+{__LOG__
+    add(*this, *vother, *this);
+}
+
+void Vector::__add__(Vector *v1, Vector *v2)
+{__LOG__
+    add(*v1, *v2, *this);
+}
 

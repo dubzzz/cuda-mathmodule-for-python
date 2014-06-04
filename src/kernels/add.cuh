@@ -1,7 +1,9 @@
-#include "add.hpp"
+#ifndef __ADD_CUH__
+#define __ADD_CUH__
 
+#include "shared.cuh"
+#include "../objects/Vector.hpp"
 #include "checks/CudaChecks.hpp"
-#include "shared.hpp"
 
 __global__ void add_kernel(const Vector d_va, const Vector d_vb, Vector d_vc)
 {
@@ -34,3 +36,4 @@ bool add(const Vector &d_va, const Vector &d_vb, Vector &d_vc)
 	return true;
 }
 
+#endif

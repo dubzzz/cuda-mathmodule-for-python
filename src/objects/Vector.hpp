@@ -39,6 +39,9 @@ public:
 	__device__ double& get(const unsigned int &x) const;
 	__device__ double& operator[](const unsigned int &x) const;
 	__device__ __host__ unsigned int getSize() const;
+    
+    void __iadd__(Vector *vother);
+    void __add__(Vector *v1, Vector *v2);
 };
 
 /*

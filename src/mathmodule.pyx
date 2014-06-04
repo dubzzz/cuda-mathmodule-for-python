@@ -1,5 +1,8 @@
 import numpy as np
 cimport numpy as np
+from cython.operator cimport dereference as deref
+
+np.import_array()
 
 cdef extern from "objects/Vector.hpp":
     cdef cppclass Vector:
@@ -8,6 +11,10 @@ cdef extern from "objects/Vector.hpp":
         void memsetZero()
         np.ndarray toNumPy()
         unsigned int getSize()
+        
+        # Operators
+        void __iadd__(Vector*)
+        void __add__(Vector*, Vector*)
 
 cdef class PyVector:
     cdef Vector *thisptr
@@ -22,7 +29,9 @@ cdef class PyVector:
         
         cdef np.ndarray ndarray
         types = [type(arg) for arg in args]
-        if types == [int]:
+        if types == []:
+            pass
+        elif types == [int]:
             self.thisptr = new Vector(args[0])
         elif types == [np.ndarray]:
             ndarray = args[0]
@@ -51,4 +60,15 @@ cdef class PyVector:
     def toNumPy(self):
         """ NumPy equivalent of CUDA Vector """
         return self.thisptr.toNumPy()
+
+    def __iadd__(self, PyVector vother):
+        self.thisptr.__iadd__(vother.thisptr)
+        return self
+    
+    def __add__(PyVector v1, PyVector v2):
+        cdef Vector *vout = new Vector(v1.thisptr.getSize())
+        vout.__add__(v1.thisptr, v2.thisptr)
+        pyvout = PyVector()
+        pyvout.thisptr = vout
+        return pyvout
 
