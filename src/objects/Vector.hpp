@@ -42,10 +42,9 @@ public:
 };
 
 /*
-	Call this method before calling anything else
-	
-	if another method which requires NumPy is called without having called this method,
-	the program will return a segmentation fault
+Call this method before calling anything else
+if another method which requires NumPy is called without having called this method,
+the program will return a segmentation fault
 */
 void init_vector();
 

@@ -1,4 +1,3 @@
-#include <Python.h>
 #include "add.hpp"
 
 #include "checks/CudaChecks.hpp"
@@ -17,7 +16,7 @@ bool add(const Vector &d_va, const Vector &d_vb, Vector &d_vc)
 {__CLOG__
 	if (d_va.getSize() != d_vb.getSize() || d_va.getSize() != d_vc.getSize())
 	{
-		PyErr_SetString(PyExc_ValueError, "In mathmodule_add: vectors va, vb and vc must have the same dimensions");
+		//TODO PyErr_SetString(PyExc_ValueError, "In mathmodule_add: vectors va, vb and vc must have the same dimensions");
 		return false;
 	}
 	
@@ -28,7 +27,7 @@ bool add(const Vector &d_va, const Vector &d_vb, Vector &d_vc)
 	cudaError_t error = cudaGetLastError();
 	if(error != cudaSuccess)
 	{
-		PyErr_SetString(PyExc_RuntimeError, "In mathmodule_add: CUDA failed");
+		//TODO PyErr_SetString(PyExc_RuntimeError, "In mathmodule_add: CUDA failed");
 		return false;
 	}
 	

@@ -1,4 +1,3 @@
-#include <Python.h>
 #include "dot.hpp"
 
 #include "checks/CudaChecks.hpp"
@@ -40,7 +39,7 @@ double dot(const Vector &d_vect1, const Vector &d_vect2)
 {__CLOG__
 	if (d_vect1.getSize() != d_vect2.getSize())
 	{
-		PyErr_SetString(PyExc_ValueError, "In mathmodule_dot: vectors vect1 and vect2 must have the same dimensions");
+		//TODO PyErr_SetString(PyExc_ValueError, "In mathmodule_dot: vectors vect1 and vect2 must have the same dimensions");
 		return 0.;
 	}
 	
@@ -55,7 +54,7 @@ double dot(const Vector &d_vect1, const Vector &d_vect2)
 	if(error != cudaSuccess)
 	{
 		cudaFree(d_dot_result);
-		PyErr_SetString(PyExc_RuntimeError, "In mathmodule_dot: CUDA failed");
+		//TODO PyErr_SetString(PyExc_RuntimeError, "In mathmodule_dot: CUDA failed");
 		return 0.;
 	}
 	

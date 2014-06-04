@@ -2,11 +2,6 @@
 #include "../checks/CudaChecks.hpp"
 #include "../preproc.hpp"
 
-void init_matrix()
-{__LOG__
-	import_array();
-}
-
 Matrix::Matrix(const unsigned int &height, const unsigned int &width) : width_(width), height_(height)
 {__LOG__
 	smart_ptr_counter_ = new int(1);

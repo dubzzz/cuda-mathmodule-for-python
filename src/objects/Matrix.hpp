@@ -1,9 +1,6 @@
 #ifndef __MATRIX_HPP__
 #define __MATRIX_HPP__
 
-#include <Python.h>
-#include <arrayobject.h>
-
 #ifndef __device__
 	#define __device__
 #endif
@@ -35,14 +32,6 @@ public:
 	__device__ __host__ unsigned int getWidth() const;
 	__device__ __host__ unsigned int getHeight() const;
 };
-
-/*
-	Call this method before calling anything else
-	
-	if another method which requires NumPy is called without having called this method,
-	the program will return a segmentation fault
-*/
-void init_matrix();
 
 #endif
 

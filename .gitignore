@@ -20,3 +20,6 @@
 *.exe
 *.out
 *.app
+
+# Auto-generated sourcecode
+src/mathmodule.cpp

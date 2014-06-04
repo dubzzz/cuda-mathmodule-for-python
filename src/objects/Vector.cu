@@ -3,9 +3,14 @@
 #include <iostream>
 #include "../preproc.hpp"
 
+bool is_init(false);
 void init_vector()
 {__LOG__
-	import_array();
+    if (! is_init)
+    {
+        import_array();
+        is_init = true;
+    }
 }
 
 Vector::Vector(const unsigned int &size) : size_(size)
@@ -70,12 +75,13 @@ void Vector::memsetZero()
 
 PyArrayObject *Vector::toNumPy()
 {__LOG__
-	int dims[] = {size_};
-	PyArrayObject *h_arrayNumPy = (PyArrayObject *) PyArray_FromDims(1, dims, NPY_DOUBLE);
-	cudaErrorCheck(cudaMemcpy(h_arrayNumPy->data, data_, size_ * sizeof(double), cudaMemcpyDeviceToHost));
-	return h_arrayNumPy;
+    init_vector();
+    
+    int dims[] = {size_};
+    PyArrayObject *h_arrayNumPy = (PyArrayObject *) PyArray_FromDims(1, dims, NPY_DOUBLE);
+    cudaErrorCheck(cudaMemcpy(h_arrayNumPy->data, data_, size_ * sizeof(double), cudaMemcpyDeviceToHost));
+    return h_arrayNumPy;
 }
-
 __device__ double& Vector::get(const unsigned int &x) const {
 	return data_[x];
 }

@@ -1,4 +1,3 @@
-#include <Python.h> // always first
 #include "product.hpp"
 
 #include "checks/CudaChecks.hpp"
@@ -43,7 +42,7 @@ Vector *product(const Matrix &d_mat, const Vector &d_vect)
 {__CLOG__
 	if (d_mat.getWidth() != d_vect.getSize())
 	{
-		PyErr_SetString(PyExc_ValueError, "In mathmodule_product: width of mat must be equal to size of vect");
+		//TODO PyErr_SetString(PyExc_ValueError, "In mathmodule_product: width of mat must be equal to size of vect");
 		return NULL;
 	}
 	
@@ -61,7 +60,7 @@ Vector *product(const Matrix &d_mat, const Vector &d_vect)
 	if(error != cudaSuccess)
 	{
 		delete d_vect_result;
-		PyErr_SetString(PyExc_RuntimeError, "In mathmodule_product: CUDA failed");
+		//TODO PyErr_SetString(PyExc_RuntimeError, "In mathmodule_product: CUDA failed");
 		return NULL;
 	}
 	
