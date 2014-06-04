@@ -1,10 +1,17 @@
 import os
+import sys
 from os.path import join
 from setuptools import setup, find_packages
 from distutils.command.build_ext import build_ext
 from distutils.extension import Extension
 from Cython.Build import cythonize
 import numpy as np
+
+ccflags = sys.argv[3:]
+if len(ccflags):
+    print "--extra flags--"
+    for ccflag in ccflags:
+        print "*", ccflag
 
 # CUDA compilation is adapted from the source
 # https://github.com/rmcgibbo/npcuda-example
@@ -132,8 +139,8 @@ for module in cython_modules:
         language='c++',
         runtime_library_dirs=[CUDA['lib64']],
         extra_compile_args={
-            'gcc': ['-D_DEBUG', '-I/usr/share/pyshared/numpy/core/include/numpy'],
-            'nvcc': ['-D_DEBUG', '-I/usr/share/pyshared/numpy/core/include/numpy', '-arch=sm_20', '--ptxas-options=-v', '-c', '--compiler-options', "'-fPIC'"]}, #-dc
+            'gcc': ['-I/usr/share/pyshared/numpy/core/include/numpy']+ccflags,
+            'nvcc': ['-I/usr/share/pyshared/numpy/core/include/numpy', '-arch=sm_20', '--ptxas-options=-v', '-c', '--compiler-options', "'-fPIC'"]+ccflags},
         extra_link_args=['-lcudadevrt', '-lcudart'],
         include_dirs=[numpy_include, CUDA['include'], 'src'])
     cython_exts.append(module_ext)
