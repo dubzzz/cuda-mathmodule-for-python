@@ -1,44 +1,57 @@
 #!/usr/bin/python
-import numpy
-import time
+import numpy as np
 import sys
+import unittest
 
-sys.path.append("../bin/")
-import mathmodule
+sys.path.append("../src/")
+import mathmodule as mm
 
 height = 4096
 width = 4096
+error_max = 1e-8
 
-ma = numpy.random.random([height, width])
-a = numpy.random.random(width)
-b = numpy.random.random(width)
+def check_equals_ndarray(array1, array2):
+    if array1.ndim == 1:
+        for i in range(array1.shape[0]):
+            if abs(array1[i]-array2[i]) > error_max:
+                return False
+        return True
+    elif array1.ndim == 2:
+        for i in range(array1.shape[0]):
+            for j in range(array1.shape[1]):
+                if abs(array1[i,j]-array2[i,j]) > error_max:
+                    return False
+    elif array1.ndim == 3:
+        for i in range(array1.shape[0]):
+            for j in range(array1.shape[1]):
+                for k in range(array1.shape[2]):
+                    if abs(array1[i,j,k]-array2[i,j,k]) > error_max:
+                        return False
+        return True
+    return False
 
-print ma
-print a
-print b
+class TestPyVector(unittest.TestCase):
+    def test_toNumPy(self):
+        a = np.random.random(width)
+        va = mm.PyVector(a)
+        self.assertTrue(check_equals_ndarray(va.toNumPy(), a))
+    
+    def test_iadd(self):
+        a = np.random.random(width)
+        b = np.random.random(width)
+        va = mm.PyVector(a)
+        vb = mm.PyVector(b)
+        va += vb
+        self.assertTrue(check_equals_ndarray(va.toNumPy(), a+b))
+    
+    def test_add(self):
+        a = np.random.random(width)
+        b = np.random.random(width)
+        va = mm.PyVector(a)
+        vb = mm.PyVector(b)
+        vc = va + vb
+        self.assertTrue(check_equals_ndarray(vc.toNumPy(), a+b))
 
-print "\nDOT PRODUCT:\n"
-
-start = time.time()
-print "MathModule:", mathmodule.dot(a, b)
-end = time.time()
-print "> time: ", 1000*(end - start), "ms"
-
-start = time.time()
-print "NumPy:     ", numpy.dot(a, b)
-end = time.time()
-print "> time: ", 1000*(end - start), "ms"
-
-print "\nMATRIX x VECTOR PRODUCT:\n"
-
-start = time.time()
-print "MathModule:", mathmodule.product(ma, a)
-end = time.time()
-print "> time: ", 1000*(end - start), "ms"
-
-start = time.time()
-print "NumPy:     ", numpy.asmatrix(ma) * numpy.asmatrix(a).transpose()
-end = time.time()
-print "> time: ", 1000*(end - start), "ms"
-
+if __name__ == '__main__':
+    unittest.main()
 
