@@ -11,8 +11,8 @@ setup = """
 import numpy as np
 import mathmodule as mm
 
-height = 4096
-width = 4096
+height = 40960
+width = 40960
 
 a = np.random.random(width)
 b = np.random.random(width)
@@ -21,7 +21,7 @@ vb = mm.PyVector(b)
 """
 
 if __name__ == '__main__':
-    if len(sys.argv) >= 1:
+    if len(sys.argv) >= 2:
         try:
             num_tests = int(sys.argv[1])
         except ValueError:
