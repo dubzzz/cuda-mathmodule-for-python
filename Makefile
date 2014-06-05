@@ -7,6 +7,7 @@ all: test
 rebuild: clean build
 
 test: build
+	python tests/benchmark.py
 	python tests/test.py
 
 build: clean

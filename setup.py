@@ -157,6 +157,9 @@ setup(name="mathmodule",
         'Cython>=0.20.1',
         'numpy>=1.8.0',
     ],
-    tests_require=['unittest'], 
+    tests_require=[
+        'timeit',
+        'unittest',
+    ], 
     zip_safe=False,
 )
