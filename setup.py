@@ -140,7 +140,7 @@ for module in cython_modules:
         runtime_library_dirs=[CUDA['lib64']],
         extra_compile_args={
             'gcc': ['-I/usr/share/pyshared/numpy/core/include/numpy']+ccflags,
-            'nvcc': ['-I/usr/share/pyshared/numpy/core/include/numpy', '-arch=sm_20', '--ptxas-options=-v', '-c', '--compiler-options', "'-fPIC'"]+ccflags},
+            'nvcc': ['-I/usr/share/pyshared/numpy/core/include/numpy', '-arch=sm_20', '--use_fast_math', '--ptxas-options=-v', '-c', '--compiler-options', "'-fPIC'"]+ccflags},
         extra_link_args=['-lcudadevrt', '-lcudart'],
         include_dirs=[numpy_include, CUDA['include'], 'src'])
     cython_exts.append(module_ext)
