@@ -5,7 +5,7 @@ import timeit as ti
 sys.path.append("../src/")
 sys.path.append("tests/../src/")
 
-num_tests = 10000
+num_tests = 100
 
 setup = """
 import numpy as np
@@ -21,6 +21,11 @@ vb = mm.PyVector(b)
 """
 
 if __name__ == '__main__':
+    if len(sys.argv) >= 1:
+        try:
+            num_tests = int(sys.argv[1])
+        except ValueError:
+            pass
     
     print "PyVector::__iadd__"
     print "> cuda: ", ti.timeit(stmt='va += vb', number=num_tests, setup=setup)
