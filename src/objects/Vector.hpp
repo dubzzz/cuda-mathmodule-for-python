@@ -2,7 +2,7 @@
 #define __VECTOR_HPP__
 
 #include <Python.h>
-#include <arrayobject.h>
+#include <numpy/arrayobject.h>
 
 #ifndef __device__
 	#define __device__
