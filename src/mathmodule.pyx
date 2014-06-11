@@ -1,6 +1,5 @@
 import numpy as np
 cimport numpy as np
-from cython.operator cimport dereference as deref
 
 np.import_array()
 
