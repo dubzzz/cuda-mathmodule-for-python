@@ -4,6 +4,7 @@
 #include "../preproc.hpp"
 
 #include "../kernels/add.cuh"
+#include "../kernels/dot.cuh"
 
 bool is_init(false);
 void init_vector()
@@ -102,5 +103,10 @@ void Vector::__iadd__(Vector *vother)
 void Vector::__add__(Vector *v1, Vector *v2)
 {__LOG__
     add(*v1, *v2, *this);
+}
+
+double Vector::__dot__(Vector *vother)
+{__LOG__
+    return dot(*this, *vother);
 }
 

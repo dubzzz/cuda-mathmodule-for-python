@@ -42,6 +42,8 @@ public:
     
     void __iadd__(Vector *vother);
     void __add__(Vector *v1, Vector *v2);
+    
+    double __dot__(Vector *vother);
 };
 
 /*

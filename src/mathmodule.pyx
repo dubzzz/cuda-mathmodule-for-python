@@ -14,6 +14,9 @@ cdef extern from "objects/Vector.hpp":
         # Operators
         void __iadd__(Vector*)
         void __add__(Vector*, Vector*)
+        
+        # Methods
+        double __dot__(Vector*)
 
 cdef class PyVector:
     cdef Vector *thisptr
@@ -70,4 +73,10 @@ cdef class PyVector:
         pyvout = PyVector()
         pyvout.thisptr = vout
         return pyvout
+    
+    def dot(self, PyVector vother):
+        return self.thisptr.__dot__(vother.thisptr)
+
+def dot(PyVector v1, PyVector v2):
+    return v1.thisptr.__dot__(v2.thisptr)
 

@@ -1,7 +1,9 @@
-#include "dot.hpp"
+#ifndef __DOT_CUH__
+#define __DOT_CUH__
 
+#include "shared.cuh"
+#include "../objects/Vector.hpp"
 #include "checks/CudaChecks.hpp"
-#include "shared.hpp"
 
 __global__ void dot_kernel(const Vector d_vect1, const Vector d_vect2, double *dot_result)
 {
@@ -63,4 +65,6 @@ double dot(const Vector &d_vect1, const Vector &d_vect2)
 	cudaErrorCheck(cudaFree(d_dot_result));
 	return h_dot_result;
 }
+
+#endif
 
