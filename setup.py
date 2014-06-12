@@ -127,13 +127,8 @@ cython_modules = ["src/mathmodule.pyx",]
 # Build extensions
 cython_exts = list()
 for module in cython_modules:
-    module_path = '/'.join(module.split('/')[:-1])
-    module_sources_cu = find_files_with_ext(module_path, "cu")
-    module_sources_cpp = find_files_with_ext(module_path, "cpp")
-    module_sources_cu = ["src/checks/CudaChecks.cu", "src/objects/Vector.cu"]
-    
     module_ext = Extension(name=module[:-4],
-        sources=module_sources_cu + module_sources_cpp + [module],
+        sources=[module],
         library_dirs=[CUDA['lib64']],
         libraries=['cudart'],
         language='c++',

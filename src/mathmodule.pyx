@@ -1,3 +1,6 @@
+# distutils: language = c++
+# distutils: sources = src/checks/CudaChecks.cu src/objects/Vector.cu
+
 import numpy as np
 cimport numpy as np
 
