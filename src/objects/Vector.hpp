@@ -44,6 +44,8 @@ public:
     void __add__(Vector *v1, Vector *v2);
     
     double __dot__(Vector *vother);
+    
+    Vector& operator=(const Vector &v);
 };
 
 /*

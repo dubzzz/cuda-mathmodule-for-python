@@ -110,3 +110,20 @@ double Vector::__dot__(Vector *vother)
     return dot(*this, *vother);
 }
 
+Vector& Vector::operator=(const Vector &v)
+{__LOG__
+    if (data_ == v.data_)
+        return *this;
+    
+    // Call free() to free current data if necessary
+    this->free();
+    
+    // Copy data from v
+    size_ = v.size_;
+    data_ = v.data_;
+    smart_ptr_counter_ = v.smart_ptr_counter_;
+    
+    // Increment smart pointer
+    (*smart_ptr_counter_) += 1;
+}
+
