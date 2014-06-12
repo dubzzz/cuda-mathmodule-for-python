@@ -11,6 +11,9 @@ height = 4096
 width = 4096
 error_max = 1e-8
 
+def check_equals_double(d1, d2):
+    return abs(d1-d2) <= error_max
+
 def check_equals_ndarray(array1, array2):
     if array1.ndim == 1:
         for i in range(array1.shape[0]):
@@ -52,6 +55,20 @@ class TestPyVector(unittest.TestCase):
         vb = mm.PyVector(b)
         vc = va + vb
         self.assertTrue(check_equals_ndarray(vc.toNumPy(), a+b))
+    
+    def test_idot(self):
+        a = np.random.random(width)
+        b = np.random.random(width)
+        va = mm.PyVector(a)
+        vb = mm.PyVector(b)
+        self.assertTrue(check_equals_double(va.dot(vb), a.dot(b)))
+    
+    def test_dot(self):
+        a = np.random.random(width)
+        b = np.random.random(width)
+        va = mm.PyVector(a)
+        vb = mm.PyVector(b)
+        self.assertTrue(check_equals_double(mm.dot(va, vb), a.dot(b)))
 
 if __name__ == '__main__':
     unittest.main()

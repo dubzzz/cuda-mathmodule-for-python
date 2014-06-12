@@ -47,3 +47,6 @@ vb = mm.PyVector(b)
         print "> cuda: ", ti.timeit(stmt='va + vb', number=num_tests, setup=setup)
         print "> numpy:", ti.timeit(stmt='a + b', number=num_tests, setup=setup)
 
+        print "PyVector::dot"
+        print "> cuda: ", ti.timeit(stmt='va.dot(vb)', number=num_tests, setup=setup)
+        print "> numpy:", ti.timeit(stmt='a.dot(b)', number=num_tests, setup=setup)
