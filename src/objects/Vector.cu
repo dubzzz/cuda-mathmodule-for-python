@@ -96,18 +96,25 @@ __device__ double& Vector::operator[](const unsigned int &x) const {
 __device__ unsigned int Vector::getSize() const { return size_; }
 
 void Vector::__iadd__(Vector *vother)
-{__LOG__
+{__CLOG__
+    __START__
     add(*this, *vother, *this);
+    __STOP__
 }
 
 void Vector::__add__(Vector *v1, Vector *v2)
-{__LOG__
+{__CLOG__
+    __START__
     add(*v1, *v2, *this);
+    __STOP__
 }
 
 double Vector::__dot__(Vector *vother)
-{__LOG__
-    return dot(*this, *vother);
+{__CLOG__
+    __START__
+    double dot_value = dot(*this, *vother);
+    __STOP__
+    return dot_value;
 }
 
 Vector& Vector::operator=(const Vector &v)
